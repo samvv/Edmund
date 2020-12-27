@@ -1,7 +1,7 @@
 {
   "name": "edmund",
   "version": "1.0.0",
-  "description": "The swiss knife of rich text editors for the web",
+  "description": "A bare-bones text editor that integrates seamlessly in larger web projects",
   "main": "index.js",
   "scripts": {
     "start": "webpack serve",
