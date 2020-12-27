@@ -1,7 +1,9 @@
 
+import React from "react";
+
 import { useEffect, useRef } from "react";
 import { Observable } from "rxjs";
-import { BlurEvent, createTextEditor, EditEvent, FocusEvent, TextEditDelta, TextEditor } from "./index";
+import { BlurEvent, createTextEditor, EditEvent, FocusEvent, TextEditor } from "./index";
 
 export interface TextEditorProps {
     editor?: TextEditor;
@@ -9,25 +11,6 @@ export interface TextEditorProps {
     onBlur?: (event: BlurEvent) => void;
     onEdit?: (event: EditEvent) => void;
 }
-
-//function useObservable<T>(observable: Observable<T>, callback: (value: T) => void | undefined) {
-//    const prevSubscriptionRef = useRef<Observable<T>>();
-//    useEffect(() => {
-//        if (prevSubscriptionRef.current !== undefined) {
-//            prevSubscriptionRef.unsubscribe();
-//            prevSubscriptionRef.current = undefined;
-//        }
-//        if (callback !== undefined) {
-//            const subscription = observable.subscribe(callback);
-//            prevSubscriptionRef.current = subscription;
-//            return () => {
-//                subscription.cancel();
-//                prevSubscriptionRef.current = undefined;
-//            }
-//        }
-//    }, [ observable, callback ]);
-//}
-
 
 function useSubscription<T>(
     observable: Observable<T>,
@@ -60,6 +43,20 @@ export default function TextEditorComponent({
     useSubscription(editor.events.getObservable('blur'), onBlur, [ onBlur ]);
     useSubscription(editor.events.getObservable('edit'), onEdit, [ onBlur ]);
     useSubscription(editor.events.getObservable('focus'), onFocus, [ onBlur ]);
+
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const currentElement = ref.current;
+        if (currentElement !== null && currentElement.childNodes[0] !== editor!.domElement) {
+            currentElement.appendChild(editor!.domElement);
+            return () => {
+                currentElement.removeChild(editor!.domElement);
+            }
+        }
+    }, [ ref.current ]);
+
+    return React.createElement('div', { ref });
 
 }
 

@@ -9,6 +9,7 @@ export type TextEditDelta
 
 export interface EditEvent {
     type: 'edit';
+    editor: TextEditor;
     delta: TextEditDelta;
 }
 
@@ -47,18 +48,41 @@ export function createTextEditor({
     placeholder = document.createTextNode('Start writing something ...'),
 }: CreateTextEditorOptions = {}): TextEditor {
 
+    const editor = {} as TextEditor;
+
     let isEmpty = contents.length === 0;
+
+    const focusEvents = new Subject<FocusEvent>();
+    const blurEvents = new Subject<BlurEvent>();
+    const editEvents = new Subject<EditEvent>();
+
+    function dispatchFocusEvent(event: FocusEvent) {
+        focusEvents.next(event);
+    }
+
+    function dispatchBlurEvent(event: BlurEvent) {
+        blurEvents.next(event);
+    }
+
+    function dispatchEditEvent(event: EditEvent) {
+        editEvents.next(event);
+    }
 
     const contentElement = document.createElement('div');
     const observer = new MutationObserver(() => {
         isEmpty = contentElement.innerHTML.length === 0;
+        dispatchEditEvent({
+            type: 'edit',
+            editor,
+            delta: null,
+        });
     });
 
-    const events = new SubjectBasedEventDispatcher<TextEditorEvents>([
-        'blur',
-        'edit',
-        'focus',
-    ]);
+    const events = new SubjectBasedEventDispatcher<TextEditorEvents>({
+        blur: blurEvents,
+        edit: editEvents,
+        focus: focusEvents,
+    });
 
     function setReadOnly() {
         contentElement.contentEditable = 'false';
@@ -76,6 +100,11 @@ export function createTextEditor({
             contentElement.removeChild(placeholder);
         }
 
+        dispatchFocusEvent({
+            type: 'focus',
+            editor,
+        });
+
         observer.observe(contentElement, {
             childList: true,
             attributes: true,
@@ -92,6 +121,11 @@ export function createTextEditor({
             contentElement.appendChild(placeholder);
         }
 
+        dispatchBlurEvent({
+            type: 'blur',
+            editor,
+        });
+
     }
 
     if (!readOnly) {
@@ -102,12 +136,12 @@ export function createTextEditor({
         contentElement.appendChild(placeholder);
     }
 
-    return {
-        events,
-        setReadOnly,
-        setWritable,
-        domElement: contentElement,
-    }
+    editor.events = events;
+    editor.setReadOnly = setReadOnly;
+    editor.setWritable = setWritable;
+    editor.domElement = contentElement;
+
+    return editor;
 
 }
 

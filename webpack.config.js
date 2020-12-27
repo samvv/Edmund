@@ -4,7 +4,7 @@ const path = require('path');
 const packageDir = path.resolve(__dirname);
 
 module.exports = {
-  entry: './src/examples.ts',
+  entry: './src/examples.tsx',
   mode: 'development',
   output: {
     filename: 'examples.bundle.js',

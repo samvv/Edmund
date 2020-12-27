@@ -16,12 +16,10 @@ export interface EventDispatcher<L extends EventList> {
 
 export class SubjectBasedEventDispatcher<L extends EventList> {
 
-    private subjects: { [K in keyof L]: Subject<L[K]> } = Object.create(null);
+    //private subjects: { [K in keyof L]: Subject<L[K]> } = Object.create(null);
 
-    constructor(eventNames: EventNames<L>[]) {
-        for (const eventName of eventNames) {
-            this.subjects[eventName] = new Subject();
-        }
+    constructor(private subjects: { [K in keyof L]: Subject<L[K]> }) {
+
     }
 
     public addEventListener<K extends EventNames<L>>(
