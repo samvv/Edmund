@@ -1,0 +1,5 @@
+/src/
+*.tgz
+examples.*
+webpack.config.js
+index.html
