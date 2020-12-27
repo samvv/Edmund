@@ -1,6 +1,6 @@
 {
   "name": "edmund",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A bare-bones text editor that integrates seamlessly in larger web projects",
   "main": "index.js",
   "scripts": {
