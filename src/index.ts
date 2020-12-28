@@ -34,6 +34,7 @@ export interface TextEditor {
     setReadOnly(): void;
     setWritable(): void;
     events: EventDispatcher<TextEditorEvents>;
+    getText(): string;
 }
 
 export interface CreateTextEditorOptions {
@@ -69,6 +70,9 @@ export function createTextEditor({
     }
 
     const contentElement = document.createElement('div');
+
+    contentElement.innerHTML = contents;
+
     const observer = new MutationObserver(() => {
         isEmpty = contentElement.innerHTML.length === 0;
         dispatchEditEvent({
@@ -106,6 +110,7 @@ export function createTextEditor({
         });
 
         observer.observe(contentElement, {
+            characterData: true,
             childList: true,
             attributes: true,
             subtree: true,
@@ -140,6 +145,7 @@ export function createTextEditor({
     editor.setReadOnly = setReadOnly;
     editor.setWritable = setWritable;
     editor.domElement = contentElement;
+    editor.getText = () => contentElement.innerHTML; 
 
     return editor;
 
