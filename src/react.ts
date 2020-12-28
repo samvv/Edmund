@@ -6,6 +6,7 @@ import { Observable } from "rxjs";
 import { BlurEvent, createTextEditor, EditEvent, FocusEvent, TextEditor } from "./index";
 
 export interface TextEditorProps {
+    defaultText?: string;
     editor?: TextEditor;
     onFocus?: (event: FocusEvent) => void;
     onBlur?: (event: BlurEvent) => void;
@@ -29,18 +30,18 @@ function useSubscription<T>(
 
 export default function TextEditorComponent({
     editor,
+    defaultText,
     onFocus,
     onBlur,
     onEdit,
     className,
-    style
+    style = {}
 }: TextEditorProps) {
 
     const editorRef = useRef<TextEditor>();
     if (editor === undefined) {
         if (editorRef.current === undefined) {
-            console.log('creating text editor');
-            editorRef.current = createTextEditor();
+            editorRef.current = createTextEditor({ contents: defaultText });
         }
         editor = editorRef.current!;
     }
@@ -59,9 +60,20 @@ export default function TextEditorComponent({
                 currentElement.removeChild(editor!.domElement);
             }
         }
-    }, [ ref.current ]);
+    }, [ ref.current, editor ]);
 
-    return React.createElement('div', { ref, style, className });
+    useEffect(() => {
+        editor!.domElement.style.flex = '1 1 auto';
+        editor!.domElement.style.outline= 'none';
+    }, [ editor.domElement ]);
+
+    useEffect(() => {
+        if (className !== undefined) {
+            editor!.domElement.className = className;
+        }
+    }, [ className ]);
+
+    return React.createElement('div', { ref, style: { display: 'flex', ...style } });
 
 }
 
