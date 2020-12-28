@@ -10,6 +10,8 @@ export interface TextEditorProps {
     onFocus?: (event: FocusEvent) => void;
     onBlur?: (event: BlurEvent) => void;
     onEdit?: (event: EditEvent) => void;
+    style?: React.CSSProperties;
+    className?: string;
 }
 
 function useSubscription<T>(
@@ -30,11 +32,14 @@ export default function TextEditorComponent({
     onFocus,
     onBlur,
     onEdit,
+    className,
+    style
 }: TextEditorProps) {
 
     const editorRef = useRef<TextEditor>();
     if (editor === undefined) {
         if (editorRef.current === undefined) {
+            console.log('creating text editor');
             editorRef.current = createTextEditor();
         }
         editor = editorRef.current!;
@@ -56,7 +61,7 @@ export default function TextEditorComponent({
         }
     }, [ ref.current ]);
 
-    return React.createElement('div', { ref });
+    return React.createElement('div', { ref, style, className });
 
 }
 
