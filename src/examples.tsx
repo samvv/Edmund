@@ -10,6 +10,14 @@ ReactDOM.render(
             onFocus={() => { console.log('Focused!'); }}
             onBlur={() => { console.log('Blurred!'); }}
             onEdit={() => { console.log('Edited!') }} />
+        <Edmund
+            onFocus={() => { console.log('Focused!'); }}
+            onBlur={() => { console.log('Blurred!'); }}
+            onEdit={() => { console.log('Edited!') }} />
+        <Edmund
+            onFocus={() => { console.log('Focused!'); }}
+            onBlur={() => { console.log('Blurred!'); }}
+            onEdit={() => { console.log('Edited!') }} />
     </>
 , document.getElementById('root')
 );
